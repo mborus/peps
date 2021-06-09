@@ -1,0 +1,223 @@
+PEP: 9999
+Title: Template Literals
+Author: Thomas Güttler <info@thomas-guettler.de>
+Sponsor: TODO
+Status: Draft
+Type: Standards Track
+Content-Type: text/x-rst
+Created: 08-Jun-2021
+Python-Version: TODO
+Post-History: 08-Jun-2021
+
+
+Abstract
+========
+
+This PEP adds Template Literals to Python.
+
+To avoid code injection Template Literals can help to write
+save Python code.
+
+Template Literals provide an easy way to access the
+local and global variables (like f-strings), so that
+passing a dictionary to the Template is not neccassary.
+
+Motivation
+==========
+
+In the context of web development Python can do more than providing
+REST APIs via http. With the trend to Server-Side-Rendering,
+we face a fundamental question:
+
+How to create HTML with Python?
+
+If you use the FrOW pattern (HTML fragments over the wire), then you
+will be writing small methods returning small HTML snippets.
+
+Passing variables into the template and escaping the strings accordingly
+should be as simple as possible.
+
+Rationale
+=========
+
+Imagine you want to create a small HTML fragment in Python,
+and return it as HTTP-Response::
+
+    HttpResponse(f'''
+ <h1>Hi {name}</h1>
+ Your messages: {messages}''')
+
+The problem here is that in above example "name" and "messages" should be treated differently.
+
+The variable "name" should get quoted.  For example if the name is "Mary & Bob",
+the result should be "Mary &amp; Bob".
+
+The variable "messages" contains HTML which is already quoted.  It should
+not be quoted again.
+
+Most frameworks have a way to do this conditional escaping.
+
+For example Django uses `conditional_escape()`_
+
+With the help of conditional_escape() the above problem could be solved like this::
+
+
+     HttpResponse(f'''
+ <h1>Hi {name}</h1>
+ Your messages: {messages}''', name=conditional_escape(name), 
+         messages=conditional_escape(messages)))
+ 
+
+This solution has two drawbacks:
+
+1. It is too verbose. Typing "conditional_escape(...)" again and again is cumbersome.
+1. If a conditional_escape() gets forgotten Cross-site scripting attacks could be possible,
+  since malicious users could inject HTML.
+
+
+TODO:
+
+- Create a pull request against the https://github.com/python/peps
+  repository.
+
+
+.. _conditional_escape():
+  https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.html.conditional_escape
+
+
+Specification
+=============
+
+Template Literals use backticks (like `JavaScript Template Literals`_)
+
+Example::
+
+    HttpResponse(`
+ <h1>Hi {name}</h1>
+ Your messages: {messages}`)
+
+The literal in backticks creates in instance of the new class `types.TemplateLiteral`
+
+
+Expressions appear within curly braces and get handled liked in f-strings (PEP-498).
+
+
+.. _JavaScript Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+
+
+  [Describe the syntax and semantics of any new language feature.]
+
+
+  Backwards Compatibility
+  =======================
+
+  [Describe potential impact and severity on pre-existing code.]
+
+
+  Security Implications
+  =====================
+
+  [How could a malicious user take advantage of this new feature?]
+
+
+  How to Teach This
+  =================
+
+  [How to teach users, new and experienced, how to apply the PEP to their work.]
+
+
+  Reference Implementation
+  ========================
+
+  [Link to any existing implementation and details about its state, e.g. proof-of-concept.]
+
+
+  Rejected Ideas
+  ==============
+
+  [Why certain ideas that were brought while discussing this PEP were not ultimately pursued.]
+
+
+  Open Issues
+  ===========
+
+  [Any points that are still being decided/discussed.]
+
+
+  References
+  ==========
+
+  [A collection of URLs used as references through the PEP.]
+
+
+  Copyright
+  =========
+
+  This document is placed in the public domain or under the
+  CC0-1.0-Universal license, whichever is more permissive.
+
+
+  
+  ..
+     Local Variables:
+     mode: indented-text
+     indent-tabs-mode: nil
+     sentence-end-double-space: t
+     fill-column: 70
+     coding: utf-8
+     End:
+
+
+Resources
+=========
+
+Many other constructs and variations are possible.  For more details
+about the reStructuredText markup, in increasing order of
+thoroughness, please see:
+
+* `A ReStructuredText Primer`__, a gentle introduction.
+
+  __ http://docutils.sourceforge.net/docs/rst/quickstart.html
+
+* `Quick reStructuredText`__, a users' quick reference.
+
+  __ http://docutils.sourceforge.net/docs/rst/quickref.html
+
+* `reStructuredText Markup Specification`__, the final authority.
+
+  __ http://docutils.sourceforge.net/spec/rst/reStructuredText.html
+
+The processing of reStructuredText PEPs is done using Docutils_.  If
+you have a question or require assistance with reStructuredText or
+Docutils, please `post a message`_ to the `Docutils-users mailing
+list`_.  The `Docutils project web site`_ has more information.
+
+.. _Docutils:
+.. _Docutils project web site: http://docutils.sourceforge.net/
+.. _post a message:
+   mailto:docutils-users@lists.sourceforge.net?subject=PEPs
+.. _Docutils-users mailing list:
+   http://docutils.sf.net/docs/user/mailing-lists.html#docutils-users
+
+
+References
+==========
+
+
+
+Copyright
+=========
+
+This document is placed in the public domain or under the
+CC0-1.0-Universal license, whichever is more permissive.
+
+
+
+..
+   Local Variables:
+   mode: indented-text
+   indent-tabs-mode: nil
+   sentence-end-double-space: t
+   fill-column: 70
+   coding: utf-8
+   End:
