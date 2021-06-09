@@ -123,17 +123,18 @@ For above example this would mean::
         'datetime.date.today()': <datetime.date(2021, 6, 9)>
         }
 
-It is up to the consumer of the TemplateLiteral to create the desired output.
+It is outside this PEP how a consumer of TemplateLiteral handles it.
 
-For example a web framework could transform a TemplateLiteral to a SafeString like this::
+
+For example a then Django web framework could transform a TemplateLiteral to a SafeString like this::
 
     def template_literal_to_safestring(template_literal):
         return mark_safe(template_literal.format(**dict((key, conditional_escape(value)) for key, value in
             template_literal.data)))
 
 
-
-
+This PEP is not related or constraint to the Django framework. It is even not related to HTML. It can
+be used for any kind of templating.
 
 .. _JavaScript Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 
@@ -154,6 +155,10 @@ Reference Implementation
 
 TODO
 
+Alternative Ideas
+=================
+
+Instead of backticks for example ``t'...'`` could be used.
 
 Rejected Ideas
 ==============
@@ -163,7 +168,9 @@ TODO
 Open Issues
 ===========
 
-TODO
+Up to now this is would return the same timestamp twice: `{datetime.datetime.now()} {datetime.datetime.now()}`
+
+
 
 References
 ==========
