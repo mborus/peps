@@ -15,12 +15,12 @@ Abstract
 
 This PEP adds Template Literals to Python.
 
-To avoid code injection Template Literals can help to write
+To avoid code injection like XSS or SQL-injection Template Literals can help to write
 save Python code.
 
 Template Literals provide an easy way to access the
 local and global variables (like f-strings), so that
-passing a dictionary to the Template is not neccassary.
+passing a dictionary to the Template is not necessary.
 
 Motivation
 ==========
@@ -32,10 +32,10 @@ we face a fundamental question:
 How to create HTML with Python?
 
 If you use the FrOW pattern (HTML fragments over the wire), then you
-will be writing small methods returning small HTML snippets.
+will be writing small methods returning small HTML fragments.
 
-Passing variables into the template and escaping the strings accordingly
-should be as simple as possible.
+As a developer I want to pass variables into template literals and
+escaping the strings accordingly as simple as possible.
 
 Rationale
 =========
@@ -62,17 +62,17 @@ For example Django uses `conditional_escape()`_
 With the help of conditional_escape() the above problem could be solved like this::
 
 
-     HttpResponse(f'''
- <h1>Hi {name}</h1>
- Your messages: {messages}''', name=conditional_escape(name), 
-         messages=conditional_escape(messages)))
+     HttpResponse('''
+         <h1>Hi {name}</h1>
+         Your messages: {messages}'''.format(name=conditional_escape(name),
+             messages=conditional_escape(messages)))
  
 
 This solution has two drawbacks:
 
 1. It is too verbose. Typing "conditional_escape(...)" again and again is cumbersome.
-1. If a conditional_escape() gets forgotten Cross-site scripting attacks could be possible,
-  since malicious users could inject HTML.
+2. If a conditional_escape() gets forgotten Cross-site scripting attacks could be possible,
+   since malicious users could inject HTML.
 
 
 TODO:
@@ -92,118 +92,83 @@ Template Literals use backticks (like `JavaScript Template Literals`_)
 
 Example::
 
+    name = 'Mary & Bob'
+    messages = `<ul><li>message1</li><li>message2</li></ul>`
     HttpResponse(`
- <h1>Hi {name}</h1>
- Your messages: {messages}`)
+        <h1>Hi {name}</h1>
+        Your messages: {messages}
 
-The literal in backticks creates in instance of the new class `types.TemplateLiteral`
-
+        Today: {datetime.date.today()}`)
 
 Expressions appear within curly braces and get handled liked in f-strings (PEP-498).
+
+The literal in backticks creates in instance of the new class `types.TemplateLiteral`.
+
+`types.TemplateLiteral` has two attributes:
+
+* `template`: The string inside the backticks.
+* `data`: A dictionary mapping the strings inside the curly braces to the evaluated result.
+
+For above example this would mean::
+
+    template == '''
+        <h1>Hi {name}</h1>
+        Your messages: {messages}
+
+        Today: {datetime.date.today()}'''
+
+    data == {
+        'name': 'Mary & Bob',
+        'messages': <TemplateLiteral ...>,
+        'datetime.date.today()': <datetime.date(2021, 6, 9)>
+        }
+
+It is up to the consumer of the TemplateLiteral to create the desired output.
+
+For example a web framework could transform a TemplateLiteral to a SafeString like this::
+
+    def template_literal_to_safestring(template_literal):
+        return mark_safe(template_literal.format(**dict((key, conditional_escape(value)) for key, value in
+            template_literal.data)))
+
+
+
 
 
 .. _JavaScript Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 
 
-  [Describe the syntax and semantics of any new language feature.]
+
+Security Implications
+=====================
+
+Template Literals can execute arbitrary code (like f-strings).
+
+Template Literals get created by Python developers, not by users. If you want to make
+templates available for users (for example if you develop a CMS), then please use a
+different solution.
 
 
-  Backwards Compatibility
-  =======================
+Reference Implementation
+========================
 
-  [Describe potential impact and severity on pre-existing code.]
-
-
-  Security Implications
-  =====================
-
-  [How could a malicious user take advantage of this new feature?]
+TODO
 
 
-  How to Teach This
-  =================
+Rejected Ideas
+==============
 
-  [How to teach users, new and experienced, how to apply the PEP to their work.]
+TODO
 
+Open Issues
+===========
 
-  Reference Implementation
-  ========================
-
-  [Link to any existing implementation and details about its state, e.g. proof-of-concept.]
-
-
-  Rejected Ideas
-  ==============
-
-  [Why certain ideas that were brought while discussing this PEP were not ultimately pursued.]
-
-
-  Open Issues
-  ===========
-
-  [Any points that are still being decided/discussed.]
-
-
-  References
-  ==========
-
-  [A collection of URLs used as references through the PEP.]
-
-
-  Copyright
-  =========
-
-  This document is placed in the public domain or under the
-  CC0-1.0-Universal license, whichever is more permissive.
-
-
-  
-  ..
-     Local Variables:
-     mode: indented-text
-     indent-tabs-mode: nil
-     sentence-end-double-space: t
-     fill-column: 70
-     coding: utf-8
-     End:
-
-
-Resources
-=========
-
-Many other constructs and variations are possible.  For more details
-about the reStructuredText markup, in increasing order of
-thoroughness, please see:
-
-* `A ReStructuredText Primer`__, a gentle introduction.
-
-  __ http://docutils.sourceforge.net/docs/rst/quickstart.html
-
-* `Quick reStructuredText`__, a users' quick reference.
-
-  __ http://docutils.sourceforge.net/docs/rst/quickref.html
-
-* `reStructuredText Markup Specification`__, the final authority.
-
-  __ http://docutils.sourceforge.net/spec/rst/reStructuredText.html
-
-The processing of reStructuredText PEPs is done using Docutils_.  If
-you have a question or require assistance with reStructuredText or
-Docutils, please `post a message`_ to the `Docutils-users mailing
-list`_.  The `Docutils project web site`_ has more information.
-
-.. _Docutils:
-.. _Docutils project web site: http://docutils.sourceforge.net/
-.. _post a message:
-   mailto:docutils-users@lists.sourceforge.net?subject=PEPs
-.. _Docutils-users mailing list:
-   http://docutils.sf.net/docs/user/mailing-lists.html#docutils-users
-
+TODO
 
 References
 ==========
 
-
+TODO
 
 Copyright
 =========
