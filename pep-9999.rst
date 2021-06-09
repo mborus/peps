@@ -15,7 +15,7 @@ Abstract
 
 This PEP adds Template Literals to Python.
 
-To avoid code injection like XSS or SQL-injection Template Literals can help to write
+To avoid code injection like XSS or SQL-injection Template Literals can help you to write
 save Python code.
 
 Template Literals provide an easy way to access the
@@ -94,7 +94,7 @@ Example::
 
     name = 'Mary & Bob'
     messages = `<ul><li>message1</li><li>message2</li></ul>`
-    HttpResponse(`
+    return HttpResponse(`
         <h1>Hi {name}</h1>
         Your messages: {messages}
 
@@ -102,12 +102,12 @@ Example::
 
 Expressions appear within curly braces and get handled liked in f-strings (PEP-498).
 
-The literal in backticks creates in instance of the new class `types.TemplateLiteral`.
+The literal in backticks creates an instance of the new class ``types.TemplateLiteral``.
 
-`types.TemplateLiteral` has two attributes:
+``types.TemplateLiteral`` has two attributes:
 
-* `template`: The string inside the backticks.
-* `data`: A dictionary mapping the strings inside the curly braces to the evaluated result.
+* ``template``: The string inside the backticks.
+* ``data``: A dictionary mapping the strings inside the curly braces to the evaluated result.
 
 For above example this would mean::
 
