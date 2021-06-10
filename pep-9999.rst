@@ -16,7 +16,7 @@ Abstract
 This PEP adds Template Literals to Python.
 
 To avoid code injection like XSS or SQL-injection Template Literals can help you to write
-save Python code.
+safe Python code.
 
 Template Literals provide an easy way to access the
 local and global variables (like f-strings), so that
