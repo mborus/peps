@@ -31,7 +31,7 @@ we face a fundamental question:
 
 How to create HTML with Python?
 
-If you use the FrOW pattern (HTML fragments over the wire), then you
+If you use the FrOW pattern (HTML fragments over the wire) [#FrOW]_, then you
 will be writing small methods returning small HTML fragments.
 
 As a developer I want to pass escaped data into template literals to be as simple as possible.
@@ -177,7 +177,8 @@ TODO
 References
 ==========
 
-TODO
+.. [#FrOW] FrOW, "HTML Fragments Over the Wire". Frameworks like Unpoly, Hotwire or htmx.
+
 
 Copyright
 =========
