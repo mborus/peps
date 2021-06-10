@@ -26,7 +26,7 @@ Motivation
 ==========
 
 In the context of web development Python can do more than providing
-REST APIs via http. With the trend to Server-Side-Rendering,
+REST APIs via http.  With the trend to Server-Side-Rendering,
 we face a fundamental question:
 
 How to create HTML with Python?
@@ -34,8 +34,7 @@ How to create HTML with Python?
 If you use the FrOW pattern (HTML fragments over the wire), then you
 will be writing small methods returning small HTML fragments.
 
-As a developer I want to pass variables into template literals and
-escaping the strings accordingly as simple as possible.
+As a developer I want to pass escaped data into template literals to be as simple as possible.
 
 Rationale
 =========
@@ -47,13 +46,15 @@ and return it as HTTP-Response::
  <h1>Hi {name}</h1>
  Your messages: {messages}''')
 
-The problem here is that in above example "name" and "messages" should be treated differently.
+The problem in above example is, that no escaping gets done.
 
-The variable "name" should get quoted.  For example if the name is "Mary & Bob",
+In above example "name" and "messages" should be treated differently.
+
+The variable "name" should get escaped.  For example if the name is "Mary & Bob",
 the result should be "Mary &amp; Bob".
 
-The variable "messages" contains HTML which is already quoted.  It should
-not be quoted again.
+The variable "messages" contains HTML which is already escaped.  It should
+not be escaped again.
 
 Most frameworks have a way to do this conditional escaping.
 
@@ -62,23 +63,16 @@ For example Django uses `conditional_escape()`_
 With the help of conditional_escape() the above problem could be solved like this::
 
 
-     HttpResponse('''
-         <h1>Hi {name}</h1>
-         Your messages: {messages}'''.format(name=conditional_escape(name),
-             messages=conditional_escape(messages)))
+     HttpResponse(f'''
+         <h1>Hi {conditional_escape(name)}</h1>
+         Your messages: {conditional_escape(messages)}''')
  
 
 This solution has two drawbacks:
 
-1. It is too verbose. Typing "conditional_escape(...)" again and again is cumbersome.
+1. It is too verbose.  Typing "conditional_escape(...)" again and again is cumbersome.
 2. If a conditional_escape() gets forgotten Cross-site scripting attacks could be possible,
    since malicious users could inject HTML.
-
-
-TODO:
-
-- Create a pull request against the https://github.com/python/peps
-  repository.
 
 
 .. _conditional_escape():
@@ -100,40 +94,49 @@ Example::
 
         Today: {datetime.date.today()}`)
 
-Expressions appear within curly braces and get handled liked in f-strings (PEP-498).
+Expressions within curly braces get handled liked in f-strings (PEP-498).
 
-The literal in backticks creates an instance of the new class ``types.TemplateLiteral``.
+The Template Literal creates an instance of the new class ``types.TemplateLiteral``.
 
 ``types.TemplateLiteral`` has two attributes:
 
-* ``template``: The string inside the backticks.
-* ``data``: A dictionary mapping the strings inside the curly braces to the evaluated result.
+* ``template``: The raw string inside the backticks.
+* ``tokens``: A list of tuples.
 
 For above example this would mean::
 
-    template == '''
+    template = '''
         <h1>Hi {name}</h1>
         Your messages: {messages}
 
         Today: {datetime.date.today()}'''
 
-    data == {
-        'name': 'Mary & Bob',
-        'messages': <TemplateLiteral ...>,
-        'datetime.date.today()': <datetime.date(2021, 6, 9)>
-        }
+    tokens = [
+        ('\n        <h1>Hi ', True),
+        ('Mary & Bob', False),
+        ('</h1>\n        Your messages: ', True),
+        (<TemplateLiteral "<ul><li>message1</li><li>message2</li></ul>">, False),
+        ('\n\n        Today: ', True),
+        (<datetime.date(2021, 6, 9)>, False)
+        ]
 
-It is outside this PEP how a consumer of TemplateLiteral handles it.
+It is outside this PEP how a consumer of TemplateLiteral handles this data structure.
 
 
-For example a then Django web framework could transform a TemplateLiteral to a SafeString like this::
+For example the Django web framework could transform a TemplateLiteral to a SafeString like this::
 
     def template_literal_to_safestring(template_literal):
-        return mark_safe(template_literal.format(**dict((key, conditional_escape(value)) for key, value in
-            template_literal.data)))
+        return mark_safe(
+            ''.join(
+                [
+                    conditional_escape(value) if not is_literal else value
+                    for (value, is_literal) in template_literal.tokens
+                ]
+            )
+        )
 
 
-This PEP is not related or constraint to the Django framework. It is even not related to HTML. It can
+This PEP is not related or constraint to the Django framework.  It is even not related to HTML.  It can
 be used for any kind of templating.
 
 .. _JavaScript Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
@@ -145,7 +148,7 @@ Security Implications
 
 Template Literals can execute arbitrary code (like f-strings).
 
-Template Literals get created by Python developers, not by users. If you want to make
+Template Literals get created by Python developers, not by users.  If you want to make
 templates available for users (for example if you develop a CMS), then please use a
 different solution.
 
@@ -168,8 +171,7 @@ TODO
 Open Issues
 ===========
 
-Up to now this is would return the same timestamp twice: `{datetime.datetime.now()} {datetime.datetime.now()}`
-
+TODO
 
 
 References
