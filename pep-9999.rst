@@ -101,7 +101,7 @@ The Template Literal creates an instance of the new class ``types.TemplateLitera
 ``types.TemplateLiteral`` has two attributes:
 
 * ``template``: The raw string inside the backticks.
-* ``tokens``: A list of tuples.
+* ``tokens``: A list of tuples: (value, is_literal).
 
 For above example this would mean::
 
