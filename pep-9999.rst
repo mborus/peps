@@ -196,6 +196,22 @@ TODO
 Rejected Ideas
 ==============
 
+Use locals() to pass variables to method
+----------------------------------------
+
+Using ``locals()`` to pass variable to the method is not a solution.
+
+Example::
+
+    name = 'Mary & Bob'
+    format_html('<h1>Welcome {name}</h1>', locals())
+
+Above example has a major drawback.  IDEs and linters think the variable "name"
+is not used. The variable would be colored in a different way, which confuses
+developers. Linters will print warnings about unused variables.
+
+Second drawback: Expressions in the template string are not possible.
+
 Getting locals() via inspect module
 -----------------------------------
 
