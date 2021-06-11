@@ -229,7 +229,7 @@ This has drawback:
 
 * IDEs and linters don't know that the variables get used and would act accordingly.
 
-* This would now allow expressions like in f-strings.
+* This would not allow expressions like in f-strings.
 
 Open Issues
 ===========
