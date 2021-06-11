@@ -176,15 +176,22 @@ templates available for users (for example if you develop a CMS), then please us
 different solution.
 
 
-Reference Implementation
-========================
-
-TODO
-
 Alternative Ideas
 =================
 
 Instead of backticks for example ``t'...'`` could be used.
+
+Alternative Names
+=================
+
+TemplateValue
+
+TemplateTokenSequence
+
+Reference Implementation
+========================
+
+TODO
 
 Rejected Ideas
 ==============
