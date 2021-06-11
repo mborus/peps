@@ -196,7 +196,40 @@ TODO
 Rejected Ideas
 ==============
 
-TODO
+Getting locals() via inspect module
+-----------------------------------
+
+Given the dynamic nature of Python, one could write a method which
+accesses the local variables of the caller.
+
+Example::
+
+    import inspect
+
+    from django.utils.html import format_html
+
+
+    def html(string):
+        locals_ = inspect.currentframe().f_back.f_locals
+        return format_html(string, **locals_)
+
+
+    def main():
+        name = "Adam"
+        statement = "I'm < 120 years old"
+        print(html("<strong>{name}</strong> says <em>{statement}</em>"))
+
+
+    if __name__ == "__main__":
+        main()
+
+
+
+This has drawback:
+
+* IDEs and linters don't know that the variables get used and would act accordingly.
+
+* This would now allow expressions like in f-strings.
 
 Open Issues
 ===========
