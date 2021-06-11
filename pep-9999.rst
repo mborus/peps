@@ -141,6 +141,29 @@ be used for any kind of templating.
 
 .. _JavaScript Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 
+Use-cases beside HTML
+=====================
+
+Logging
+-------
+
+`Logging Style Guide of Google`_:
+
+    For logging functions that expect a pattern-string (with %-placeholders) as their first argument:
+    Always call them with a string literal (not an f-string!) as their first argument
+    with pattern-parameters as subsequent arguments.  Some logging implementations collect the
+    unexpanded pattern-string as a queryable field.  It also prevents spending time rendering a
+    message that no logger is configured to output.
+
+Example::
+
+    if load > max_load:
+        logging.warn(`Load is too high: {load}`)
+
+This way the logging handler has access to the actual value, and could encode it as JSON.  This way
+the log processing tools, don't need to do error-prone parsing of the logged string.
+
+.. _Logging Style Guide of Google: https://google.github.io/styleguide/pyguide.html#3101-logging
 
 
 Security Implications
