@@ -160,7 +160,10 @@ the log processing tools, don't need to do error-prone parsing of the logged str
 I18N
 ----
 
+Internationalization could be done like this::
 
+    `<h1>{_('Hi')} {name}!</h1>
+        {_('Your messages')}: {messages}`
 
 Security Implications
 =====================
