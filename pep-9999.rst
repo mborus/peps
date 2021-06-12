@@ -39,16 +39,14 @@ As a developer I want to pass escaped data into template literals as simple as p
 Rationale
 =========
 
-Imagine you want to create a small HTML fragment in Python,
-and return it as HTTP-Response::
+Imagine you want to create a small HTML fragment in Python. If you use the Django framework,
+you could do it like this::
 
-    HttpResponse(f'''
+    format_html('''
  <h1>Hi {name}</h1>
- Your messages: {messages}''')
+ Your messages: {messages}''', name=name, messages=messages)
 
-The problem in above example is, that no escaping gets done.
-
-In above example "name" and "messages" should be treated differently.
+In above example "name" and "messages" are different.
 
 The variable "name" should get escaped.  For example if the name is "Mary & Bob",
 the result should be "Mary &amp; Bob".
@@ -56,28 +54,13 @@ the result should be "Mary &amp; Bob".
 The variable "messages" contains HTML which is already escaped.  It should
 not be escaped again.
 
-Most frameworks have a way to do this conditional escaping.
 
-For example Django uses `conditional_escape()`_
+``format_html()`` has two drawbacks:
 
-With the help of conditional_escape() the above problem could be solved like this::
+1. It is too verbose.  Passing the variables into the template by typing ``foo=foo, bar=bar`` again and again is cumbersome.
+2. Expressions (like in f-strings) are not possible.
 
-
-     HttpResponse(f'''
-         <h1>Hi {conditional_escape(name)}</h1>
-         Your messages: {conditional_escape(messages)}''')
- 
-
-This solution has two drawbacks:
-
-1. It is too verbose.  Typing "conditional_escape(...)" again and again is cumbersome.
-2. If a conditional_escape() gets forgotten Cross-site scripting attacks could be possible,
-   since malicious users could inject HTML.
-
-
-.. _conditional_escape():
-  https://docs.djangoproject.com/en/3.2/ref/utils/#django.utils.html.conditional_escape
-
+Template Literals will solve both drawbacks with a easy to read and write syntax.
 
 Specification
 =============
@@ -103,7 +86,7 @@ The Template Literal creates an instance of the new class ``types.TemplateLitera
 * ``template``: The raw string inside the backticks.
 * ``tokens``: A list of tuples: (value, is_literal).
 
-For above example this would mean::
+For above example the TemplateLiteral instance will have these attributes::
 
     template = '''
         <h1>Hi {name}</h1>
@@ -121,7 +104,6 @@ For above example this would mean::
         ]
 
 It is outside this PEP how a consumer of TemplateLiteral handles this data structure.
-
 
 For example the Django web framework could transform a TemplateLiteral to a SafeString like this::
 
@@ -176,30 +158,13 @@ templates available for users (for example if you develop a CMS), then please us
 different solution.
 
 
-Alternative Ideas
-=================
-
-Instead of backticks for example ``t'...'`` could be used.
-
-Alternative Names
-=================
-
-TemplateValue
-
-TemplateTokenSequence
-
-Reference Implementation
-========================
-
-TODO
-
 Rejected Ideas
 ==============
 
 Use locals() to pass variables to method
 ----------------------------------------
 
-Using ``locals()`` to pass variable to the method is not a solution.
+Instead of enhancing Python, a developer could use ``locals()``.
 
 Example::
 
@@ -212,8 +177,8 @@ developers. Linters will print warnings about unused variables.
 
 Second drawback: Expressions in the template string are not possible.
 
-Getting locals() via inspect module
------------------------------------
+Accessing the callers namespace via inspect module
+--------------------------------------------------
 
 Given the dynamic nature of Python, one could write a method which
 accesses the local variables of the caller.
@@ -236,16 +201,29 @@ Example::
         print(html("<strong>{name}</strong> says <em>{statement}</em>"))
 
 
-    if __name__ == "__main__":
-        main()
-
-
-
 This has drawback:
 
 * IDEs and linters don't know that the variables get used and would act accordingly.
 
 * This would not allow expressions like in f-strings.
+
+
+Alternative Ideas
+=================
+
+Instead of backticks for example ``t'...'`` could be used.
+
+Alternative Names
+=================
+
+TemplateValue
+
+TemplateTokenSequence
+
+Reference Implementation
+========================
+
+TODO
 
 Open Issues
 ===========
