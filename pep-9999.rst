@@ -43,8 +43,8 @@ Imagine you want to create a small HTML fragment in Python. If you use the Djang
 you could do it like this::
 
     format_html('''
- <h1>Hi {name}</h1>
- Your messages: {messages}''', name=name, messages=messages)
+        <h1>Hi {name}</h1>
+        Your messages: {messages}''', name=name, messages=messages)
 
 In above example "name" and "messages" are different.
 
