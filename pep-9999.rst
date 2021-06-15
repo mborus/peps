@@ -65,6 +65,11 @@ Template Literals will solve both drawbacks with a easy to read and write syntax
 Goal
 ====
 
+Make Python the #1 language for server-side-rendering.
+
+To achieve world domination, creating a properly escaped HTML string
+needs to be as simple as possible.
+
 The goal is to reduce above example to::
 
     `<h1>Hi {name}!</h1>
