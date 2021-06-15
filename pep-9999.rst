@@ -130,7 +130,10 @@ For example the Django web framework could transform a TemplateLiteral to a Safe
 This PEP is not related or constraint to the Django framework.  It is even not related to HTML.  It can
 be used for any kind of templating.
 
+For curious readers, here is the implementation of `conditional_escape`_
+
 .. _JavaScript Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
+.. _conditional_escape: https://github.com/django/django/blob/824981b2dc61a76a59d0e470bed6e61626a44ccf/django/utils/html.py#L92
 
 Use-cases beside HTML
 =====================
