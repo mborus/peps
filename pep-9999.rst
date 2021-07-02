@@ -186,6 +186,25 @@ different solution.
 Rejected Ideas
 ==============
 
+Prefix "i": i'...'
+==================
+
+Some IDEs detect that you want use a f-string automtically:
+
+You type::
+
+    name = 'Peter'
+    print('Hello {name...
+    
+and the IDE automatically adds the missing "f" in front of the string::
+
+    name = 'Peter'
+    print(f'Hello {name...
+    
+This is an handy feature, which would not work reliably if there are two different prefixes.
+
+That's why backticks, like used in JavaScript Template Literals, was chosen.
+
 Use locals() to pass variables to method
 ----------------------------------------
 
@@ -232,11 +251,6 @@ This has drawback:
 
 * This would not allow expressions like in f-strings.
 
-
-Alternative Ideas
-=================
-
-Instead of backticks for example ``t'...'`` could be used.
 
 Alternative Names
 =================
