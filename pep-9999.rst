@@ -182,6 +182,20 @@ Template Literals get created by Python developers, not by users.  If you want t
 templates available for users (for example if you develop a CMS), then please use a
 different solution.
 
+Out of scope: Save escaping of HTML
+===================================
+
+Template Literals are about creating a data structure. 
+
+The user of Template Literals could use this data structure for any fancy kind
+of computation.
+
+We estimate most users will use the data structure to create HTML.
+
+Nevertheless, how the user processes the data strucure is up to the user.
+
+Escaping HTML and related security implications are out of scope of this PEP.
+
 
 Rejected Ideas
 ==============
