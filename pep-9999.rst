@@ -143,15 +143,16 @@ For curious readers, here is the implementation of `conditional_escape()`_
 Alternative Data Structure
 ==========================
 
-We could use a more condensed data structure: The result is always a list with an odd length.
+We could use a more condensed data structure: The result is always a list with an odd length. And the first item
+is always a literal string. The second is the result of an expression. The third a literal string, ....
 
 Examples::
 
 
 
     `` --> ['']
-    `foo' --> ['foo']
-    `{expr}` --> [expr]
+    `foo` --> ['foo']
+    `{expr}` --> ['', expr, '']
     `foo{expr}bar` --> ['foo', expr, 'bar']
 
 
